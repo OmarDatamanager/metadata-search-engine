@@ -39,7 +39,7 @@ Det här är en sökmotor för metadata som extraherar och söker i metadata fr�
 
 ---
 
-# Gren: feature/image-extraction
+# Branch: feature/image-extraction
 
 ## Syfte
 Denna gren lägger till stöd för att extrahera metadata från bildfiler.
