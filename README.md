@@ -36,3 +36,40 @@ Det här är en sökmotor för metadata som extraherar och söker i metadata fr�
 - **Databas**: MySQL
 - **Filbehandling**: pdf-parse-fork, exifr
 - **Versionshantering**: Git, GitHub
+
+---
+
+# Gren: feature/image-extraction
+
+## Syfte
+Denna gren lägger till stöd för att extrahera metadata från bildfiler.
+
+## Funktioner som lagts till
+- Extrahering av metadata från bilder (JPG, JPEG, PNG) med biblioteket `exifr`
+- Stöd för följande data:
+  - Bilddimensioner (bredd och höjd)
+  - Kamerainformation (tillverkare och modell)
+  - GPS-koordinater (latitud och longitud)
+  - Datum och tid när bilden togs
+
+## Tekniska detaljer
+- Använder `exifr` för att läsa EXIF-data från bilder
+- Sparar metadata i JSON-format i MySQL-databasen
+- Hanterar både horisontella och vertikala bilder
+- Stöder automatisk rotation av bilder baserat på EXIF-data
+
+## Installation
+1. Installera required bibliotek:
+```bash
+npm install exifr
+```
+
+2. Lägg till bilder i mappen `files/image/`
+
+3. Kör bildbehandlingen:
+```bash
+node image-extractor.js
+```
+
+## Användning
+Systemet kommer automatiskt att extrahera metadata från alla bilder i mappen och spara dem i databasen. Data kan sedan sökas via webbgränssnittet.
