@@ -39,7 +39,7 @@ Det här är en sökmotor för metadata som extraherar och söker i metadata fr�
 
 ---
 
-# Gren: feature/image-extraction
+# Branch: feature/image-extraction
 
 ## Syfte
 Denna gren lägger till stöd för att extrahera metadata från bildfiler.
@@ -73,3 +73,54 @@ node image-extractor.js
 
 ## Användning
 Systemet kommer automatiskt att extrahera metadata från alla bilder i mappen och spara dem i databasen. Data kan sedan sökas via webbgränssnittet.
+
+---
+
+# Projektstatus: Metadata-sökmotor
+
+##  Översikt
+Projektet har nått en fungerande prototyp med grundläggande funktionalitet för metadatahantering och visning.
+
+##  Genomförda Milstolpar
+
+### 1. Backend-infrastruktur
+-  Express-server konfigurerad
+-  MySQL-databasanslutning
+-  REST API-endpoint (`/api/files`)
+-  Stöd för metadataextrahering från PDF-filer
+-  Stöd för metadataextrahering från bildfiler (EXIF)
+
+### 2. Frontend-implementation
+-  Grundläggande webbgränssnitt
+-  Dynamisk datainhämtning via API
+-  Responsiv design (i grunden)
+-  Listvisning av filer och metadata
+
+### 3. Databashantering
+-  Tabellstruktur för metadata-lagring
+-  JSON-lagring för flexibel datahantering
+-  Stöd för flera filtyper i samma struktur
+
+##  Teknisk Implementering
+
+### Backend-stack
+```javascript
+Node.js + Express + MySQL2 + pdf-parse-fork + exifr
+```
+
+### Frontend-stack
+```html
+Vanilla JavaScript
+```
+
+##  Testresultat
+-  API-endpoint returnerar korrekt JSON-data
+-  Databasfrågor exekveras utan fel
+-  Frontend hämtar och visar data korrekt
+-  Metadata extraheras från både PDF och bildfiler
+
+##  Nästa Fas
+- Implementera sökfunktionalitet
+- Utöka stöd för fler filtyper
+- Förbättra användargränssnittet
+- Optimera databassökningar
