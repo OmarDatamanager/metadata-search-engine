@@ -124,3 +124,23 @@ Vanilla JavaScript
 - Utöka stöd för fler filtyper
 - Förbättra användargränssnittet
 - Optimera databassökningar
+
+---
+
+# Uppdatering: PowerPoint-metadata
+
+## Genomfört
+-  **Importering av PowerPoint-metadata** från CSV/JSON till MySQL-databasen
+-  Använt färdig extraherad metadata från Library of Congress via Apache Tika
+-  Automatisk konvertering av CSV till JSON via [csvjson.com](https://csvjson.com)
+-  Datarensning: borttagning av tekniska fält (`digest`, `sha256`, `sha512`)
+
+### Filtypshantering
+- Bevarat originalfilnamn (baserat på `digest` + `.ppt`) för filåtervinning
+- Renad metadata utan tekniska detaljer för användaren
+
+## Nästa steg
+- Integrera med sökgränssnittet
+- Lägg till stöd för filnedladdning
+- Utöka med fler filtyper
+
