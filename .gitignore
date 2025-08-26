@@ -1,7 +1,2 @@
 .env
-*.ppt
-*.pps
-*.pot
-*.pptx
-*.pptm
-*.ppsx
+files/

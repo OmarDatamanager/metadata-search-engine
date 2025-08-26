@@ -144,3 +144,43 @@ Vanilla JavaScript
 - Lägg till stöd för filnedladdning
 - Utöka med fler filtyper
 
+---
+
+# Extrahering och lagring av ljudmetadata i databasen
+
+## Genomfört
+-  **Stöd för ljudfiler** tillagt i metadata-sökmotorn
+-  Automatisk extrahering av metadata från MP3-filer med biblioteket `music-metadata`
+-  Lagring av relevant metadata i MySQL-databasen
+-  Filsystemet organiserat med ljudfiler i `files/audio/`
+
+## Teknisk implementation
+### Extraherade metadatafält
+- **Basinformation** (`common`):
+  - `title` (låtitel)
+  - `artist` (artist/upphovsperson)
+  - `album` (albumtitel)
+  - `year` (utgivningsår)
+  - `genre` (musikgenre)
+  
+- **Teknisk information** (`format`):
+  - `duration` (speltid i sekunder)
+  - `bitrate` (ljudkvalitet i bit/s)
+
+### Databasintegration
+```sql
+INSERT INTO files (filename, file_type, metadata_json) VALUES
+('låtfil.mp3', 'audio', '{"title": "Låttitel", "artist": "Artistnamn", ...}')
+```
+
+## Användning
+1. Placera MP3-filer i mappen `files/audio/`
+2. Kör metadata-extrahering:
+   ```bash
+   node audio-extractor.js
+   ```
+
+## Datafällor hanterade
+- Saknade metadatafält ersätts med standardvärden ("Okänd titel")
+- Automatisk felhantering vid korrupta eller saknade filer
+
