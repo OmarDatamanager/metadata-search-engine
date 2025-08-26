@@ -184,3 +184,30 @@ INSERT INTO files (filename, file_type, metadata_json) VALUES
 - Saknade metadatafält ersätts med standardvärden ("Okänd titel")
 - Automatisk felhantering vid korrupta eller saknade filer
 
+---
+
+# Bildmetadata har processats och lagts till i databasen
+
+## Genomfört
+-  **Bildmetadata extraherad** från alla bildfiler i `files/image/`
+-  **Relevanta fält har valts ut** för sökning och visning:
+  - `camera_make` (t.ex. "Apple")
+  - `camera_model` (t.ex. "iPhone 15 Pro")
+  - `date_taken` (datum när bilden togs)
+  - `gps` (geografiska koordinater)
+  - `width` och `height` (bilddimensioner)
+  - Tekniska data (`iso`, `exposure_time`, `f_number`)
+-  **Data har lagrats** i MySQL-tabellen `files` som JSON
+
+
+### Datainsamling
+- **Antal bilder processade**: Alla bilder i mappen `files/image/`
+- **Filformat som stöds**: JPG, JPEG, PNG
+- **GPS-data extraherad** för bilder med geotagging
+
+## Nuvarande status
+Alla planerade filtyper har nu metadata i databasen:
+-  **PDF-filer** (via pdf-parse-fork)
+-  **Ljudfiler** (MP3 via music-metadata)  
+-  **Bilder** (JPG/PNG via exifr)
+-  **PowerPoint** (via färdig JSON-metadata)
