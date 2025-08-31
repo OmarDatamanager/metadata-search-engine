@@ -9,7 +9,7 @@ Det här är en sökmotor för metadata som extraherar och söker i metadata fr�
 3. Konfigurera .env-fil med databasuppgifter
 4. Starta servern: `node index.js`
 
-## Vad vi har gjort hittills
+## Vad har gjort hittills
 
 ### 1. Projektuppsättning
 - Skapat Node.js-projekt med `npm init -y`
@@ -211,3 +211,58 @@ Alla planerade filtyper har nu metadata i databasen:
 -  **Ljudfiler** (MP3 via music-metadata)  
 -  **Bilder** (JPG/PNG via exifr)
 -  **PowerPoint** (via färdig JSON-metadata)
+
+---
+
+# Statusrapport: Utveckling av Metadata-Sökmotorn
+
+## Genomförda Förbättringar
+
+### 1. Databassstruktur och Import
+-  **MySQL-databas** med tabellen `files` skapad
+-  **Stöd för flera filtyper**: PDF, bilder, ljud, PowerPoint
+-  **Metadataextrahering** från alla filtyper
+-  **JSON-lagring** för flexibel datahantering
+
+### 2. Backend-Utveckling
+-  **Express-server** med REST API
+-  **Sök-API** (`/api/search`) med LIKE-sökning
+-  **Hämtning av alla filer** (`/api/files`)
+
+### 3. Frontend-Gränssnitt
+-  **Grundläggande sökgränssnitt** i `index.html`
+-  **Dynamisk resultatvisning** med JavaScript
+-  **Responsiv design** (i grunden)
+
+## Tekniska Utmaningar och Lösningar
+
+### Problem 1: Databasanslutning
+- **Fel**: `Connection refused` 
+- **Lösning**: Korrigerade `db.js` med rätt inloggningsuppgifter
+
+### Problem 2: JSON-sökning
+- **Fel**: `LIKE`-sökning hittade inte alla resultat
+- **Lösning**: Implementerade `JSON_EXTRACT` för bättre sökning
+
+### Problem 3: Filtypshantering
+- **Utmaning**: Olika metadata för olika filtyper
+- **Lösning**: Enhetlig JSON-struktur med specifika fält
+
+### Problem 4: Prestanda
+- **Utmaning**: Långsamma sökningar med `LIKE`
+- **Lösning**: Planerar implementering av `FULLTEXT`-index
+
+## Nuvarande Status
+-  **Sökfunktion fungerar** för enkla söktermer
+-  **Webbgränssnittet responserar** på sökningar
+
+## Kända Begränsningar
+-  **Fulltext-sökning behöver optimeras**
+-  **Frontend behöver förbättrat UX**
+-  **Sökningen är case-sensitive**
+
+## Nästa Steg
+1. Implementera `FULLTEXT`-index för snabbare sökning
+2. Lägga till avancerade filter (datum, filtyp, etc.)
+3. Förbättra användargränssnittet med CSS
+4. Lägga till sidbrytning för resultat

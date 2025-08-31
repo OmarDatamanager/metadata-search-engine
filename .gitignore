@@ -1,4 +1,8 @@
 .env
-files/
+node_modules/
+files/pdf/
+files/audio/
+files/image/
+files/ppt/
 *-test.js
 test-*.js

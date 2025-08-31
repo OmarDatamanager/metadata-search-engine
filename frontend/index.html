@@ -8,8 +8,29 @@
 
 <body>
   <h1>Metadata Sökmotor</h1>
+
+  <!-- Search Form -->
+  <input type="text" id="searchInput" placeholder="Sök...">
+  <button onclick="search()">Sök</button>
+
   <div id="results"></div>
-  <script src="script.js"></script>
+
+  <script>
+    async function search() {
+      const query = document.getElementById('searchInput').value;
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const results = await response.json();
+
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = results.map(file => `
+        <div style="border: 1px solid #ccc; padding: 10px; margin: 10px;">
+          <h3>${file.filename}</h3>
+          <p>Typ: ${file.file_type}</p>
+          <p>Metadata: ${JSON.stringify(file.metadata_json)}</p>
+        </div>
+      `).join('');
+    }
+  </script>
 </body>
 
 </html>
