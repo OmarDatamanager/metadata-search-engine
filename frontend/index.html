@@ -4,26 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Metadata Sökmotor</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-
-    .result-card {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 6px;
-    }
-
-    .result-card h3 {
-      margin: 0 0 5px 0;
-    }
-
-    .meta-field {
-      margin: 2px 0;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 
 <body>
@@ -55,7 +36,7 @@
       resultsDiv.innerHTML = results.map(file => {
         const metadata = file.metadata_json || {};
 
-        // to render metadata
+        // Function to render metadata recursively
         function renderMetadata(obj, prefix = "") {
           if (!obj || typeof obj !== "object") return `<span>${obj}</span>`;
           let html = "";
@@ -71,10 +52,22 @@
 
         const details = renderMetadata(metadata);
 
+        // Determine preview for image/audio
+        let preview = "";
+        if (file.file_type === "image") {
+          preview = `<img src="files/image/${file.filename}" alt="${file.filename}" class="file-preview">`;
+        } else if (file.file_type === "audio") {
+          preview = `<audio controls class="file-preview">
+                      <source src="files/audio/${file.filename}" type="audio/mpeg">
+                      Din webbläsare stödjer inte ljuduppspelning.
+                    </audio>`;
+        }
+
         return `
           <div class="result-card">
             <h3>${file.filename}</h3>
             <p><b>Typ:</b> ${file.file_type}</p>
+            ${preview}
             ${details}
           </div>
         `;

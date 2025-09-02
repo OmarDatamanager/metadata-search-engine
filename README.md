@@ -269,7 +269,7 @@ Alla planerade filtyper har nu metadata i databasen:
 
 ---
 
-###Förbättring av metadata-visning
+# Förbättring av metadata-visning
 
 I projektets tidigare version visades metadata i frontend som rå JSON eller med fasta fält för varje filtyp (t.ex. date_taken, camera_make för bilder, title, artist för ljudfiler osv.). Detta fungerade inte alltid eftersom vissa filer hade olika strukturer eller saknade vissa fält, vilket ledde till att metadata inte visades korrekt.
 För att lösa detta implementerades en mer flexibel renderingsfunktion som:
@@ -289,3 +289,32 @@ Tekniska exempel på nyligen använda lösningar:
 * **Frontend**: enkel visning med HTML och CSS, där varje fil visas i en “result-card” med metadata listade på ett organiserat sätt.
 
 Resultatet är en mer robust och användarvänlig presentation av metadata för alla filtyper, där användaren kan se all tillgänglig information på ett tydligt sätt.
+
+---
+
+# Förhandsvisning av bilder och ljudfiler
+
+* **Bildförhandsvisning**: Bilder visas nu som **miniaturer** (thumbnails) i resultatkorten, med automatisk storleksanpassning för ett enhetligt utseende.
+* **Ljuduppspelning**: Ljudfiler kan spelas upp direkt via en inbäddad **HTML5-audio player** i resultatkorten.
+* **Responsiva resultatkort**: Alla filer (bilder, ljud m.m.) presenteras i **kortlayout** med tydlig struktur och skuggor för bättre användarupplevelse.
+
+###  Designförbättringar
+
+* Ny **style.css** som hanterar layout, kortdesign, knappar och inputfält.
+* Bilder är nu **skalade och beskurna** (`object-fit: cover`) för att undvika för stora visningar.
+* **Hover-effekter** på korten för ett mer interaktivt gränssnitt.
+
+###  Tekniska förbättringar
+
+* Servern är uppdaterad för att korrekt serva statiska filer från:
+
+  * `files/image` för bilder
+  * `files/audio` för ljud
+* Buggen med laddning av CSS (fel MIME-typ) är åtgärdad genom att flytta **style.css** till `frontend/`-mappen.
+
+###  Nästa steg (planerat)
+
+* Lägga till **förhandsvisning av PDF och PowerPoint** (t.ex. via ikoner, thumbnails eller inline viewers).
+* Implementera **avancerade filter** i sökningen (t.ex. filtyp, datum, storlek).
+* Förbättra **relevanssortering** i sökresultaten för bättre träffsäkerhet.
+

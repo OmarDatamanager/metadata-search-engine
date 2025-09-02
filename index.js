@@ -1,18 +1,23 @@
 import express from 'express';
 import connection from './db.js';
+import path from 'path';
 
 const app = express();
 const port = 3000;
 
-// to serve static files from the frontend directory
+// Serve static frontend files
 app.use(express.static('frontend'));
 
-// Route for the homepage
+// Serve media files
+app.use('/files/audio', express.static(path.join('files', 'audio')));
+app.use('/files/image', express.static(path.join('files', 'image')));
+
+// Homepage route
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root: 'frontend' });
 });
 
-// API for searching metadata
+// API: Search metadata
 app.get('/api/search', async (req, res) => {
   try {
     const query = req.query.q || '';
@@ -36,7 +41,7 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// API for fetching all files
+// API: Get all files
 app.get('/api/files', async (req, res) => {
   try {
     const [files] = await connection.execute('SELECT * FROM files');
@@ -46,13 +51,13 @@ app.get('/api/files', async (req, res) => {
   }
 });
 
-// Test database connection
+// Test DB connection
 connection.execute('SELECT 1 + 1 AS result', (err, results) => {
   if (err) console.error('Database error:', err);
   else console.log('Database test result:', results[0].result);
 });
 
-// Start the server
+// Start server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
