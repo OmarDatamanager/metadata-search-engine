@@ -266,3 +266,26 @@ Alla planerade filtyper har nu metadata i databasen:
 2. Lägga till avancerade filter (datum, filtyp, etc.)
 3. Förbättra användargränssnittet med CSS
 4. Lägga till sidbrytning för resultat
+
+---
+
+###Förbättring av metadata-visning
+
+I projektets tidigare version visades metadata i frontend som rå JSON eller med fasta fält för varje filtyp (t.ex. date_taken, camera_make för bilder, title, artist för ljudfiler osv.). Detta fungerade inte alltid eftersom vissa filer hade olika strukturer eller saknade vissa fält, vilket ledde till att metadata inte visades korrekt.
+För att lösa detta implementerades en mer flexibel renderingsfunktion som:
+
+* Itererar genom hela metadata-objektet rekursivt, oavsett hur många nivåer av nyckel-värde-par som finns.
+* Visar både enkla värden och inbäddade objekt utan att förlita sig på specifika fältnamn.
+* Behandlar saknade eller `null` värden på ett konsekvent sätt med en standard "-" som visning.
+* Gör det enkelt att lägga till nya metadatafält i framtiden utan att ändra frontend-koden.
+
+Dessutom lades en **dropdown-lista för filtyp** till, så att användaren kan filtrera sökresultaten efter filtyp (bilder, ljud, PDF, PowerPoint).
+
+Tekniska exempel på nyligen använda lösningar:
+
+* **JavaScript**: rekursiv funktion `renderMetadata` för dynamisk rendering av metadataobjekt.
+* **Node.js / Express**: REST-API för att söka i metadata som lagrats i MySQL.
+* **MySQL**: lagring av metadata som JSON, vilket möjliggör flexibel sökning och filtrering.
+* **Frontend**: enkel visning med HTML och CSS, där varje fil visas i en “result-card” med metadata listade på ett organiserat sätt.
+
+Resultatet är en mer robust och användarvänlig presentation av metadata för alla filtyper, där användaren kan se all tillgänglig information på ett tydligt sätt.

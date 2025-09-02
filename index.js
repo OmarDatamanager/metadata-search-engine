@@ -15,17 +15,20 @@ app.get('/', (req, res) => {
 // API for searching metadata
 app.get('/api/search', async (req, res) => {
   try {
-    const query = req.query.q;
-    console.log('Search query:', query);
+    const query = req.query.q || '';
+    const type = req.query.type || '';
 
-    const [rows, fields] = await connection.promise().execute(
-      `SELECT filename, file_type, metadata_json 
-       FROM files 
-       WHERE LOWER(JSON_EXTRACT(metadata_json, '$')) LIKE LOWER(?)`,
-      [`%${query}%`]
-    );
+    let sql = `SELECT filename, file_type, metadata_json 
+               FROM files 
+               WHERE LOWER(JSON_EXTRACT(metadata_json, '$')) LIKE LOWER(?)`;
+    const params = [`%${query}%`];
 
-    console.log('Results found:', rows.length);
+    if (type) {
+      sql += ` AND file_type = ?`;
+      params.push(type);
+    }
+
+    const [rows] = await connection.promise().execute(sql, params);
     res.json(rows);
   } catch (error) {
     console.error('Search error:', error);

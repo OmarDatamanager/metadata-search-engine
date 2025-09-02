@@ -4,6 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Metadata Sökmotor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .result-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+    }
+
+    .result-card h3 {
+      margin: 0 0 5px 0;
+    }
+
+    .meta-field {
+      margin: 2px 0;
+    }
+  </style>
 </head>
 
 <body>
@@ -11,6 +31,14 @@
 
   <!-- Search Form -->
   <input type="text" id="searchInput" placeholder="Sök...">
+  <select id="fileType">
+    <option value="">Alla</option>
+    <option value="image">Bilder</option>
+    <option value="audio">Ljud</option>
+    <option value="pdf">PDF</option>
+    <option value="ppt">PowerPoint</option>
+  </select>
+
   <button onclick="search()">Sök</button>
 
   <div id="results"></div>
@@ -18,17 +46,39 @@
   <script>
     async function search() {
       const query = document.getElementById('searchInput').value;
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const fileType = document.getElementById('fileType').value;
+
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=${fileType}`);
       const results = await response.json();
 
       const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = results.map(file => `
-        <div style="border: 1px solid #ccc; padding: 10px; margin: 10px;">
-          <h3>${file.filename}</h3>
-          <p>Typ: ${file.file_type}</p>
-          <p>Metadata: ${JSON.stringify(file.metadata_json)}</p>
-        </div>
-      `).join('');
+      resultsDiv.innerHTML = results.map(file => {
+        const metadata = file.metadata_json || {};
+
+        // to render metadata
+        function renderMetadata(obj, prefix = "") {
+          if (!obj || typeof obj !== "object") return `<span>${obj}</span>`;
+          let html = "";
+          for (const key in obj) {
+            if (obj[key] && typeof obj[key] === "object" && !Array.isArray(obj[key])) {
+              html += `<p class="meta-field"><b>${prefix + key}:</b></p>` + renderMetadata(obj[key], prefix + key + ".");
+            } else {
+              html += `<p class="meta-field"><b>${prefix + key}:</b> ${obj[key] !== null && obj[key] !== undefined ? obj[key] : "-"}</p>`;
+            }
+          }
+          return html;
+        }
+
+        const details = renderMetadata(metadata);
+
+        return `
+          <div class="result-card">
+            <h3>${file.filename}</h3>
+            <p><b>Typ:</b> ${file.file_type}</p>
+            ${details}
+          </div>
+        `;
+      }).join('');
     }
   </script>
 </body>
