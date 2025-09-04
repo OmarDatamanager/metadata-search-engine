@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Metadata Sökmotor</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body>
@@ -23,8 +23,9 @@
     <button onclick="search()">Sök</button>
   </div>
 
-  <!-- Filters -->
+  <!-- Filters Container -->
   <div id="filtersContainer" class="filters-container" style="display: none;">
+    <!-- ISO Range Filter -->
     <label for="isoRange">Filtrera ISO:</label>
     <select id="isoRange">
       <option value="all">Alla ISO</option>
@@ -35,6 +36,29 @@
       <option value="201-250">201-250</option>
       <option value="251-300">251-300</option>
     </select>
+
+    <!-- f_number Filter -->
+    <label for="fNumber">Filtrera Bländare (f):</label>
+    <select id="fNumber">
+      <option value="all">Alla f</option>
+      <option value="<3">Mindre än 3</option>
+      <option value="3">3</option>
+      <option value="3.5">3.5</option>
+      <option value="4">4</option>
+      <option value="4.5">4.5</option>
+      <option value="5">5</option>
+      <option value="5.5">5.5</option>
+      <option value="6">6</option>
+      <option value="6.5">6.5</option>
+      <option value="7">7</option>
+      <option value="7.5">7.5</option>
+      <option value="8">8</option>
+      <option value="8.5">8.5</option>
+      <option value="9">9</option>
+      <option value="9.5">9.5</option>
+      <option value="10">10</option>
+      <option value=">10">Större än 10</option>
+    </select>
   </div>
 
   <!-- Results -->
@@ -44,21 +68,19 @@
     function showFilters() {
       const type = document.getElementById('fileType').value;
       const filtersContainer = document.getElementById('filtersContainer');
-      if (type === 'image') {
-        filtersContainer.style.display = 'flex';
-      } else {
-        filtersContainer.style.display = 'none';
-      }
+      filtersContainer.style.display = (type === 'image') ? 'flex' : 'none';
     }
 
     async function search() {
       const query = document.getElementById('searchInput').value;
       const fileType = document.getElementById('fileType').value;
       const isoRange = document.getElementById('isoRange')?.value || 'all';
+      const fNumber = document.getElementById('fNumber')?.value || 'all';
 
       let url = `/api/search?q=${encodeURIComponent(query)}&type=${fileType}`;
-      if (fileType === 'image' && isoRange && isoRange !== 'all') {
-        url += `&isoRange=${isoRange}`;
+      if (fileType === 'image') {
+        if (isoRange && isoRange !== 'all') url += `&isoRange=${isoRange}`;
+        if (fNumber && fNumber !== 'all') url += `&fNumber=${fNumber}`;
       }
 
       const response = await fetch(url);
@@ -75,7 +97,7 @@
             if (obj[key] && typeof obj[key] === "object" && !Array.isArray(obj[key])) {
               html += `<p class="meta-field"><b>${prefix + key}:</b></p>` + renderMetadata(obj[key], prefix + key + ".");
             } else {
-              html += `<p class="meta-field"><b>${prefix + key}:</b> ${obj[key] !== null && obj[key] !== undefined ? obj[key] : "-"}</p>`;
+              html += `<p class="meta-field"><b>${prefix + key}:</b> ${obj[key] != null ? obj[key] : "-"}</p>`;
             }
           }
           return html;

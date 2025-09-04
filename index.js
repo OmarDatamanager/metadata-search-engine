@@ -17,12 +17,13 @@ app.get('/', (req, res) => {
   res.sendFile('index.html', { root: 'frontend' });
 });
 
-// API: Search metadata with ISO filtering
+// API: Search metadata with ISO and f_number filtering
 app.get('/api/search', async (req, res) => {
   try {
     const query = req.query.q || '';
     const type = req.query.type || '';
     const isoRange = req.query.isoRange || 'all';
+    const fNumber = req.query.fNumber || 'all';
 
     let sql = `SELECT filename, file_type, metadata_json 
                FROM files 
@@ -36,9 +37,23 @@ app.get('/api/search', async (req, res) => {
 
     // ISO filtering for images
     if (type === 'image' && isoRange && isoRange !== 'all') {
-      const [min, max] = isoRange.split('-').map(Number);
+      const [minISO, maxISO] = isoRange.split('-').map(Number);
       sql += ` AND JSON_EXTRACT(metadata_json, '$.iso') BETWEEN ? AND ?`;
-      params.push(min, max);
+      params.push(minISO, maxISO);
+    }
+
+    // f_number filtering for images
+    if (type === 'image' && fNumber && fNumber !== 'all') {
+      if (fNumber === '<3') {
+        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') < ?`;
+        params.push(3);
+      } else if (fNumber === '>10') {
+        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') > ?`;
+        params.push(10);
+      } else {
+        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') = ?`;
+        params.push(parseFloat(fNumber));
+      }
     }
 
     const [rows] = await connection.promise().execute(sql, params);

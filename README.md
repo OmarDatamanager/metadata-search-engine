@@ -331,3 +331,13 @@ Nu kan användaren filtrera bildfiler baserat på ISO-värden inom olika interva
 * Frontend skickar `isoRange` som URL-parameter till API\:t, som sedan använder `JSON_EXTRACT` i SQL-frågan för att hämta rätt filer.
 * Filtren är dynamiska och visas endast när användaren väljer "Bilder" i filtypens dropdown.
 
+---
+
+## Bildfiltrering med Bländare (f)
+
+Den senaste uppdateringen introducerar avancerad filtrering för bildfiler:
+
+- **Bländare (f_number) filter**: Filtrering baserat på kamerans bländare. Värden kan väljas i steg om 0.5 mellan <3 och 10, samt alternativ för "Mindre än 3" och "Större än 10".
+- **Dynamisk visning**: Filtrena visas endast när användaren har valt "Bilder" från huvudfiltypmenyn.
+- **UI-anpassning**: Filtrena ligger horisontellt under sökfältet och kan enkelt utökas med fler filter i framtiden.
+- **Backend-integration**: API:et tar emot filtreringsparametrar (`isoRange` och `fNumber`) och returnerar endast bilder som matchar de valda kriterierna.
