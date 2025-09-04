@@ -4,39 +4,70 @@
 <head>
   <meta charset="UTF-8">
   <title>Metadata Sökmotor</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
   <h1>Metadata Sökmotor</h1>
 
-  <!-- Search Form -->
-  <input type="text" id="searchInput" placeholder="Sök...">
-  <select id="fileType">
-    <option value="">Alla</option>
-    <option value="image">Bilder</option>
-    <option value="audio">Ljud</option>
-    <option value="pdf">PDF</option>
-    <option value="ppt">PowerPoint</option>
-  </select>
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <select id="fileType" onchange="showFilters()">
+      <option value="">Alla filer</option>
+      <option value="image">Bilder</option>
+      <option value="audio">Ljud</option>
+      <option value="pdf">PDF</option>
+      <option value="ppt">PowerPoint</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="Sök...">
+    <button onclick="search()">Sök</button>
+  </div>
 
-  <button onclick="search()">Sök</button>
+  <!-- Filters -->
+  <div id="filtersContainer" class="filters-container" style="display: none;">
+    <label for="isoRange">Filtrera ISO:</label>
+    <select id="isoRange">
+      <option value="all">Alla ISO</option>
+      <option value="0-50">0-50</option>
+      <option value="51-100">51-100</option>
+      <option value="101-150">101-150</option>
+      <option value="151-200">151-200</option>
+      <option value="201-250">201-250</option>
+      <option value="251-300">251-300</option>
+    </select>
+  </div>
 
+  <!-- Results -->
   <div id="results"></div>
 
   <script>
+    function showFilters() {
+      const type = document.getElementById('fileType').value;
+      const filtersContainer = document.getElementById('filtersContainer');
+      if (type === 'image') {
+        filtersContainer.style.display = 'flex';
+      } else {
+        filtersContainer.style.display = 'none';
+      }
+    }
+
     async function search() {
       const query = document.getElementById('searchInput').value;
       const fileType = document.getElementById('fileType').value;
+      const isoRange = document.getElementById('isoRange')?.value || 'all';
 
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=${fileType}`);
+      let url = `/api/search?q=${encodeURIComponent(query)}&type=${fileType}`;
+      if (fileType === 'image' && isoRange && isoRange !== 'all') {
+        url += `&isoRange=${isoRange}`;
+      }
+
+      const response = await fetch(url);
       const results = await response.json();
 
       const resultsDiv = document.getElementById('results');
       resultsDiv.innerHTML = results.map(file => {
         const metadata = file.metadata_json || {};
 
-        // Function to render metadata recursively
         function renderMetadata(obj, prefix = "") {
           if (!obj || typeof obj !== "object") return `<span>${obj}</span>`;
           let html = "";
@@ -52,7 +83,6 @@
 
         const details = renderMetadata(metadata);
 
-        // Determine preview for image/audio
         let preview = "";
         if (file.file_type === "image") {
           preview = `<img src="files/image/${file.filename}" alt="${file.filename}" class="file-preview">`;

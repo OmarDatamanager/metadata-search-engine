@@ -17,11 +17,12 @@ app.get('/', (req, res) => {
   res.sendFile('index.html', { root: 'frontend' });
 });
 
-// API: Search metadata
+// API: Search metadata with ISO filtering
 app.get('/api/search', async (req, res) => {
   try {
     const query = req.query.q || '';
     const type = req.query.type || '';
+    const isoRange = req.query.isoRange || 'all';
 
     let sql = `SELECT filename, file_type, metadata_json 
                FROM files 
@@ -31,6 +32,13 @@ app.get('/api/search', async (req, res) => {
     if (type) {
       sql += ` AND file_type = ?`;
       params.push(type);
+    }
+
+    // ISO filtering for images
+    if (type === 'image' && isoRange && isoRange !== 'all') {
+      const [min, max] = isoRange.split('-').map(Number);
+      sql += ` AND JSON_EXTRACT(metadata_json, '$.iso') BETWEEN ? AND ?`;
+      params.push(min, max);
     }
 
     const [rows] = await connection.promise().execute(sql, params);

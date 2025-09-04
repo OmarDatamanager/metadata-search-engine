@@ -318,3 +318,16 @@ Resultatet är en mer robust och användarvänlig presentation av metadata för 
 * Implementera **avancerade filter** i sökningen (t.ex. filtyp, datum, storlek).
 * Förbättra **relevanssortering** i sökresultaten för bättre träffsäkerhet.
 
+---
+
+### Ny funktion: ISO-filter för bilder
+
+Nu kan användaren filtrera bildfiler baserat på ISO-värden inom olika intervall (t.ex. 0–50, 51–100, 101–150 osv.). Detta gör det lättare att hitta bilder med specifika ljusförhållanden eller kvalitetsnivåer.
+
+### Teknisk beskrivning
+
+* Filtreringen sker på serversidan via REST API\:t `/api/search`.
+* För bildfiler kontrolleras metadatafältet `iso` och jämförs med det valda intervallet (`isoRange`).
+* Frontend skickar `isoRange` som URL-parameter till API\:t, som sedan använder `JSON_EXTRACT` i SQL-frågan för att hämta rätt filer.
+* Filtren är dynamiska och visas endast när användaren väljer "Bilder" i filtypens dropdown.
+
