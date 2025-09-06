@@ -17,43 +17,51 @@ app.get('/', (req, res) => {
   res.sendFile('index.html', { root: 'frontend' });
 });
 
-// API: Search metadata with ISO and f_number filtering
+// API: Search metadata with ISO, fNumber, and date_taken filtering
 app.get('/api/search', async (req, res) => {
   try {
     const query = req.query.q || '';
     const type = req.query.type || '';
     const isoRange = req.query.isoRange || 'all';
     const fNumber = req.query.fNumber || 'all';
+    const dateTaken = req.query.dateTaken || 'all';
 
-    let sql = `SELECT filename, file_type, metadata_json 
-               FROM files 
-               WHERE LOWER(JSON_EXTRACT(metadata_json, '$')) LIKE LOWER(?)`;
+    let sql = `
+      SELECT filename, file_type, metadata_json 
+      FROM files 
+      WHERE LOWER(JSON_EXTRACT(metadata_json, '$')) LIKE LOWER(?)
+    `;
     const params = [`%${query}%`];
 
+    // File type filter
     if (type) {
       sql += ` AND file_type = ?`;
       params.push(type);
     }
 
-    // ISO filtering for images
-    if (type === 'image' && isoRange && isoRange !== 'all') {
-      const [minISO, maxISO] = isoRange.split('-').map(Number);
+    // ISO filtering
+    if (type === 'image' && isoRange !== 'all') {
+      const [min, max] = isoRange.split('-').map(Number);
       sql += ` AND JSON_EXTRACT(metadata_json, '$.iso') BETWEEN ? AND ?`;
-      params.push(minISO, maxISO);
+      params.push(min, max);
     }
 
-    // f_number filtering for images
-    if (type === 'image' && fNumber && fNumber !== 'all') {
+    // fNumber filtering
+    if (type === 'image' && fNumber !== 'all') {
       if (fNumber === '<3') {
-        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') < ?`;
-        params.push(3);
+        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') < 3`;
       } else if (fNumber === '>10') {
-        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') > ?`;
-        params.push(10);
+        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') > 10`;
       } else {
         sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') = ?`;
         params.push(parseFloat(fNumber));
       }
+    }
+
+    // Year filtering from date_taken
+    if (type === 'image' && dateTaken !== 'all') {
+      sql += ` AND YEAR(STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(metadata_json, '$.date_taken')), '%Y-%m-%dT%H:%i:%s.%fZ')) = ?`;
+      params.push(parseInt(dateTaken, 10));
     }
 
     const [rows] = await connection.promise().execute(sql, params);

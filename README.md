@@ -341,3 +341,18 @@ Den senaste uppdateringen introducerar avancerad filtrering för bildfiler:
 - **Dynamisk visning**: Filtrena visas endast när användaren har valt "Bilder" från huvudfiltypmenyn.
 - **UI-anpassning**: Filtrena ligger horisontellt under sökfältet och kan enkelt utökas med fler filter i framtiden.
 - **Backend-integration**: API:et tar emot filtreringsparametrar (`isoRange` och `fNumber`) och returnerar endast bilder som matchar de valda kriterierna.
+
+---
+
+## Nya funktioner och förbättringar
+
+### 1. Filtrering på årtal (2007–2012)
+Systemet stödjer nu filtrering av bilder baserat på årtal från `date_taken` i metadata.  
+Endast år (2007–2012) används för sökningen, även om fullständig tidsstämpel finns i databasen.  
+Exempel: metadata `"2010-07-03T13:31:13.000Z"` matchas korrekt med filtret `2010`.
+
+### 2. Rensning av dubbelkod i frontend
+Tidigare fanns duplicerad söklogik i både `index.html` och `script.js`.  
+Nu finns all söklogik samlad i `script.js`, medan `index.html` endast innehåller strukturen för gränssnittet.  
+Detta minskar risken för konflikter, gör koden mer underhållbar och tydligare att förstå.
+

@@ -1,25 +1,31 @@
-// script.js
+// Show or hide filters depending on file type
+function showFilters() {
+  const type = document.getElementById('fileType').value;
+  const filtersContainer = document.getElementById('filtersContainer');
+  if (type === 'image') {
+    filtersContainer.style.display = 'flex';
+  } else {
+    filtersContainer.style.display = 'none';
+  }
+}
+
+// Main search function
 async function searchFiles() {
   try {
     const query = document.getElementById('searchInput').value;
     const fileType = document.getElementById('fileType').value;
+    const isoRange = document.getElementById('isoRange')?.value || 'all';
+    const fNumber = document.getElementById('fNumber')?.value || 'all';
+    const dateTaken = document.getElementById('dateTaken')?.value || 'all';
 
-    // Image filters
-    const minISO = document.getElementById('minISO')?.value || '';
-    const maxISO = document.getElementById('maxISO')?.value || '';
-    const minFNumber = document.getElementById('minFNumber')?.value || '';
-    const maxFNumber = document.getElementById('maxFNumber')?.value || '';
-
-    // Build query string
-    const params = new URLSearchParams({ q: query, type: fileType });
+    let url = `/api/search?q=${encodeURIComponent(query)}&type=${fileType}`;
     if (fileType === 'image') {
-      if (minISO) params.append('minISO', minISO);
-      if (maxISO) params.append('maxISO', maxISO);
-      if (minFNumber) params.append('minFNumber', minFNumber);
-      if (maxFNumber) params.append('maxFNumber', maxFNumber);
+      if (isoRange !== 'all') url += `&isoRange=${isoRange}`;
+      if (fNumber !== 'all') url += `&fNumber=${fNumber}`;
+      if (dateTaken !== 'all') url += `&dateTaken=${dateTaken}`;
     }
 
-    const response = await fetch(`/api/search?${params.toString()}`);
+    const response = await fetch(url);
     const results = await response.json();
 
     const resultsDiv = document.getElementById('results');
@@ -32,9 +38,10 @@ async function searchFiles() {
         let html = "";
         for (const key in obj) {
           if (obj[key] && typeof obj[key] === "object" && !Array.isArray(obj[key])) {
-            html += `<p class="meta-field"><b>${prefix + key}:</b></p>` + renderMetadata(obj[key], prefix + key + ".");
+            html += `<p class="meta-field"><b>${prefix + key}:</b></p>` +
+              renderMetadata(obj[key], prefix + key + ".");
           } else {
-            html += `<p class="meta-field"><b>${prefix + key}:</b> ${obj[key] !== null && obj[key] !== undefined ? obj[key] : "-"}</p>`;
+            html += `<p class="meta-field"><b>${prefix + key}:</b> ${obj[key] ?? "-"}</p>`;
           }
         }
         return html;
@@ -42,7 +49,7 @@ async function searchFiles() {
 
       const details = renderMetadata(metadata);
 
-      // Determine preview for image/audio
+      // Determine preview
       let preview = "";
       if (file.file_type === "image") {
         preview = `<img src="files/image/${file.filename}" alt="${file.filename}" class="file-preview">`;
@@ -67,15 +74,6 @@ async function searchFiles() {
   }
 }
 
-// Initial load
-searchFiles();
 
 // Attach search to button
-document.querySelector('button').addEventListener('click', searchFiles);
-
-// Optional: attach filter input changes for instant search
-const filterInputs = ['minISO', 'maxISO', 'minFNumber', 'maxFNumber'];
-filterInputs.forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', searchFiles);
-});
+document.getElementById('searchButton').addEventListener('click', searchFiles);
