@@ -1,20 +1,24 @@
 import express from 'express';
 import connection from './db.js';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const port = 3000;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Serve static frontend files
-app.use(express.static('frontend'));
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Serve media files
-app.use('/files/audio', express.static(path.join('files', 'audio')));
-app.use('/files/image', express.static(path.join('files', 'image')));
+app.use('/files/audio', express.static(path.join(__dirname, 'files', 'audio')));
+app.use('/files/image', express.static(path.join(__dirname, 'files', 'image')));
 
 // Homepage route
 app.get('/', (req, res) => {
-  res.sendFile('index.html', { root: 'frontend' });
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // API: Search metadata with ISO, fNumber, and date_taken filtering

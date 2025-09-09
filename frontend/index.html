@@ -3,8 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Metadata Sökmotor</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 
 <body>
@@ -25,57 +28,73 @@
 
   <!-- Filters -->
   <div id="filtersContainer" class="filters-container" style="display: none;">
-    <!-- ISO filter -->
-    <label for="isoRange">Filtrera ISO:</label>
-    <select id="isoRange">
-      <option value="all">Alla ISO</option>
-      <option value="0-50">0-50</option>
-      <option value="51-100">51-100</option>
-      <option value="101-150">101-150</option>
-      <option value="151-200">151-200</option>
-      <option value="201-250">201-250</option>
-      <option value="251-300">251-300</option>
-    </select>
+    <label for="isoRange">Filtrera ISO:
+      <select id="isoRange">
+        <option value="all">Alla ISO</option>
+        <option value="0-50">0-50</option>
+        <option value="51-100">51-100</option>
+        <option value="101-150">101-150</option>
+        <option value="151-200">151-200</option>
+        <option value="201-250">201-250</option>
+        <option value="251-300">251-300</option>
+      </select>
+    </label>
 
-    <!-- f_number filter -->
-    <label for="fNumber">Filtrera Bländare (f):</label>
-    <select id="fNumber">
-      <option value="all">Alla f</option>
-      <option value="<3">Mindre än 3</option>
-      <option value="3">3</option>
-      <option value="3.5">3.5</option>
-      <option value="4">4</option>
-      <option value="4.5">4.5</option>
-      <option value="5">5</option>
-      <option value="5.5">5.5</option>
-      <option value="6">6</option>
-      <option value="6.5">6.5</option>
-      <option value="7">7</option>
-      <option value="7.5">7.5</option>
-      <option value="8">8</option>
-      <option value="8.5">8.5</option>
-      <option value="9">9</option>
-      <option value="9.5">9.5</option>
-      <option value="10">10</option>
-      <option value=">10">Större än 10</option>
-    </select>
+    <label for="fNumber">Filtrera Bländare (f):
+      <select id="fNumber">
+        <option value="all">Alla f</option>
+        <option value="<3">Mindre än 3</option>
+        <option value="3">3</option>
+        <option value="3.5">3.5</option>
+        <option value="4">4</option>
+        <option value="4.5">4.5</option>
+        <option value="5">5</option>
+        <option value="5.5">5.5</option>
+        <option value="6">6</option>
+        <option value="6.5">6.5</option>
+        <option value="7">7</option>
+        <option value="7.5">7.5</option>
+        <option value="8">8</option>
+        <option value="8.5">8.5</option>
+        <option value="9">9</option>
+        <option value="9.5">9.5</option>
+        <option value="10">10</option>
+        <option value=">10">Större än 10</option>
+      </select>
+    </label>
 
-    <!-- date_taken filter -->
-    <label for="dateTaken">Filtrera År:</label>
-    <select id="dateTaken">
-      <option value="all">Alla år</option>
-      <option value="2007">2007</option>
-      <option value="2008">2008</option>
-      <option value="2009">2009</option>
-      <option value="2010">2010</option>
-      <option value="2011">2011</option>
-      <option value="2012">2012</option>
-    </select>
+    <label for="dateTaken">Filtrera År:
+      <select id="dateTaken">
+        <option value="all">Alla år</option>
+        <option value="2007">2007</option>
+        <option value="2008">2008</option>
+        <option value="2009">2009</option>
+        <option value="2010">2010</option>
+        <option value="2011">2011</option>
+        <option value="2012">2012</option>
+      </select>
+    </label>
   </div>
 
+  <!-- Map controls -->
+  <div id="mapControls" class="map-controls" style="display: none;">
+    <button id="mapButton">Visa resultat på karta</button>
+    <button id="backButton" style="display: none;">Tillbaka till lista</button>
+  </div>
+
+  <!-- Results container -->
   <div id="results"></div>
 
-  <script src="script.js?v=6"></script>
+  <!-- Map container -->
+  <div id="map" style="height:500px; display:none;"></div>
+
+  <!-- Notification -->
+  <div id="notification" class="notification"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <script src="script.js"></script>
 </body>
 
 </html>

@@ -356,3 +356,35 @@ Tidigare fanns duplicerad söklogik i både `index.html` och `script.js`.
 Nu finns all söklogik samlad i `script.js`, medan `index.html` endast innehåller strukturen för gränssnittet.  
 Detta minskar risken för konflikter, gör koden mer underhållbar och tydligare att förstå.
 
+---
+
+## Senaste uppdateringar
+
+### 1. Kartvisning av resultat
+
+* Ett nytt alternativ *"Visa resultat på karta"* har implementerats.
+* När bilder innehåller GPS-koordinater kan de visualiseras direkt på en interaktiv karta via **Leaflet**.
+* Varje markör visar:
+
+  * Filnamn
+  * Förhandsvisning av bilden
+  * GPS-koordinater
+  * ISO, bländare och datum (om tillgängligt)
+
+### 2. Förbättrad presentation av metadata
+
+* Metadata visas nu i ett mer strukturerat och läsbart format.
+* Hierarkiska metadatafält renderas rekursivt och grupperas på ett tydligare sätt.
+
+### 3. Förbättrad användarupplevelse
+
+* Sökresultat presenteras i **kortformat** med förhandsvisning av filer (bilder/ljud).
+* Notifieringar visas vid fel eller när inga resultat hittas.
+* Kartkontroller (visa karta / tillbaka till lista) har lagts till för bättre navigation.
+
+### 4. Buggrättningar och datakvalitet
+
+* Fix för att säkerställa att endast giltiga GPS-koordinater används.
+* Testloggning i konsolen visar antal filer med GPS-data för felsökning.
+* Enstaka filer med felaktiga koordinater identifierades och hanterades.
+
