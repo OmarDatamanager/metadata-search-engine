@@ -21,51 +21,65 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
-// API: Search metadata with ISO, fNumber, and date_taken filtering
+// API: Search metadata with filters
 app.get('/api/search', async (req, res) => {
   try {
-    const query = req.query.q || '';
-    const type = req.query.type || '';
-    const isoRange = req.query.isoRange || 'all';
-    const fNumber = req.query.fNumber || 'all';
-    const dateTaken = req.query.dateTaken || 'all';
+    const {
+      q = '',
+      type = '',
+      isoRange = 'all',
+      fNumber = 'all',
+      dateTaken = 'all',
+      genre,
+      artist,
+      year
+    } = req.query;
 
-    let sql = `
-      SELECT filename, file_type, metadata_json 
-      FROM files 
-      WHERE LOWER(JSON_EXTRACT(metadata_json, '$')) LIKE LOWER(?)
-    `;
-    const params = [`%${query}%`];
+    let sql = `SELECT filename, file_type, metadata_json FROM files WHERE LOWER(JSON_EXTRACT(metadata_json,'$')) LIKE LOWER(?)`;
+    const params = [`%${q}%`];
 
-    // File type filter
     if (type) {
       sql += ` AND file_type = ?`;
       params.push(type);
     }
 
-    // ISO filtering
-    if (type === 'image' && isoRange !== 'all') {
-      const [min, max] = isoRange.split('-').map(Number);
-      sql += ` AND JSON_EXTRACT(metadata_json, '$.iso') BETWEEN ? AND ?`;
-      params.push(min, max);
-    }
+    // Image filters
+    if (type === 'image') {
+      if (isoRange !== 'all') {
+        const [min, max] = isoRange.split('-').map(Number);
+        sql += ` AND JSON_EXTRACT(metadata_json,'$.iso') BETWEEN ? AND ?`;
+        params.push(min, max);
+      }
 
-    // fNumber filtering
-    if (type === 'image' && fNumber !== 'all') {
-      if (fNumber === '<3') {
-        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') < 3`;
-      } else if (fNumber === '>10') {
-        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') > 10`;
-      } else {
-        sql += ` AND JSON_EXTRACT(metadata_json, '$.f_number') = ?`;
-        params.push(parseFloat(fNumber));
+      if (fNumber !== 'all') {
+        if (fNumber === '<3') sql += ` AND JSON_EXTRACT(metadata_json,'$.f_number') < 3`;
+        else if (fNumber === '>10') sql += ` AND JSON_EXTRACT(metadata_json,'$.f_number') > 10`;
+        else {
+          sql += ` AND JSON_EXTRACT(metadata_json,'$.f_number') = ?`;
+          params.push(parseFloat(fNumber));
+        }
+      }
+
+      if (dateTaken !== 'all') {
+        sql += ` AND YEAR(STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(metadata_json,'$.date_taken')),'%Y-%m-%dT%H:%i:%s.%fZ')) = ?`;
+        params.push(parseInt(dateTaken, 10));
       }
     }
 
-    // Year filtering from date_taken
-    if (type === 'image' && dateTaken !== 'all') {
-      sql += ` AND YEAR(STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(metadata_json, '$.date_taken')), '%Y-%m-%dT%H:%i:%s.%fZ')) = ?`;
-      params.push(parseInt(dateTaken, 10));
+    // Audio filters
+    if (type === 'audio') {
+      if (genre) {
+        sql += ` AND JSON_UNQUOTE(JSON_EXTRACT(metadata_json,'$.genre')) = ?`;
+        params.push(genre);
+      }
+      if (artist) {
+        sql += ` AND JSON_UNQUOTE(JSON_EXTRACT(metadata_json,'$.artist')) = ?`;
+        params.push(artist);
+      }
+      if (year) {
+        sql += ` AND JSON_UNQUOTE(JSON_EXTRACT(metadata_json,'$.year')) = ?`;
+        params.push(year);
+      }
     }
 
     const [rows] = await connection.promise().execute(sql, params);
@@ -76,7 +90,7 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// API: Get all files
+// API: Get all files (optional, can be used for debugging)
 app.get('/api/files', async (req, res) => {
   try {
     const [files] = await connection.execute('SELECT * FROM files');

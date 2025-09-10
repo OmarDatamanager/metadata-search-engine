@@ -1,13 +1,12 @@
-// script.js
-
 let latestResults = [];
 let map;
 let markers = [];
 
 function showFilters() {
   const type = document.getElementById('fileType').value;
-  const filtersContainer = document.getElementById('filtersContainer');
-  filtersContainer.style.display = type === 'image' ? 'flex' : 'none';
+  document.getElementById('filtersContainer').style.display = type ? 'flex' : 'none';
+  document.getElementById('imageFilters').style.display = type === 'image' ? 'flex' : 'none';
+  document.getElementById('audioFilters').style.display = type === 'audio' ? 'flex' : 'none';
 }
 
 function showNotification(message, isError = true) {
@@ -15,58 +14,51 @@ function showNotification(message, isError = true) {
   notification.textContent = message;
   notification.style.background = isError ? '#e74c3c' : '#2ecc71';
   notification.style.display = 'block';
-
-  setTimeout(() => {
-    notification.style.display = 'none';
-  }, 3000);
+  setTimeout(() => { notification.style.display = 'none'; }, 3000);
 }
 
 async function searchFiles() {
   try {
     const query = document.getElementById('searchInput').value;
     const fileType = document.getElementById('fileType').value;
-    const isoRange = document.getElementById('isoRange')?.value || 'all';
-    const fNumber = document.getElementById('fNumber')?.value || 'all';
-    const dateTaken = document.getElementById('dateTaken')?.value || 'all';
-
     let url = `/api/search?q=${encodeURIComponent(query)}&type=${fileType}`;
+
+    // Image filters
     if (fileType === 'image') {
+      const isoRange = document.getElementById('isoRange')?.value || 'all';
+      const fNumber = document.getElementById('fNumber')?.value || 'all';
+      const dateTaken = document.getElementById('dateTaken')?.value || 'all';
       if (isoRange !== 'all') url += `&isoRange=${isoRange}`;
       if (fNumber !== 'all') url += `&fNumber=${fNumber}`;
       if (dateTaken !== 'all') url += `&dateTaken=${dateTaken}`;
     }
 
+    // Audio filters
+    if (fileType === 'audio') {
+      const genre = document.getElementById('genreFilter').value;
+      const artist = document.getElementById('artistFilter').value;
+      const year = document.getElementById('yearFilter').value;
+      if (genre !== 'all') url += `&genre=${encodeURIComponent(genre)}`;
+      if (artist !== 'all') url += `&artist=${encodeURIComponent(artist)}`;
+      if (year !== 'all') url += `&year=${encodeURIComponent(year)}`;
+    }
+
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Server error: ${response.status}`);
-
     const results = await response.json();
 
     results.forEach(file => {
       if (typeof file.metadata_json === 'string') {
-        try {
-          file.metadata_json = JSON.parse(file.metadata_json);
-        } catch {
-          file.metadata_json = {};
-        }
+        try { file.metadata_json = JSON.parse(file.metadata_json); }
+        catch { file.metadata_json = {}; }
       }
     });
 
     latestResults = results;
-
-    console.log("Total results:", results.length);
-    const imagesWithGPS = results.filter(file =>
-      file.file_type === 'image' &&
-      file.metadata_json &&
-      file.metadata_json.gps &&
-      file.metadata_json.gps.lat &&
-      file.metadata_json.gps.lng
-    );
-    console.log("Images with GPS data:", imagesWithGPS.length);
-    imagesWithGPS.forEach(file => {
-      console.log(`- ${file.filename}: ${file.metadata_json.gps.lat}, ${file.metadata_json.gps.lng}`);
-    });
-
+    populateAudioFilters(results);
     displayResults(results);
+
+    if (results.length === 0) showNotification('Inga resultat hittades', false);
     toggleMapButton(results);
 
     // reset view
@@ -81,17 +73,60 @@ async function searchFiles() {
   }
 }
 
+function populateAudioFilters(results) {
+  const genreSet = new Set();
+  const artistSet = new Set();
+  const yearSet = new Set();
+  results.forEach(f => {
+    if (f.file_type === 'audio' && f.metadata_json) {
+      if (f.metadata_json.genre) genreSet.add(f.metadata_json.genre);
+      if (f.metadata_json.artist) artistSet.add(f.metadata_json.artist);
+      if (f.metadata_json.year) yearSet.add(f.metadata_json.year);
+    }
+  });
+
+  const genreFilter = document.getElementById('genreFilter');
+  const artistFilter = document.getElementById('artistFilter');
+  const yearFilter = document.getElementById('yearFilter');
+
+  // clear previous options except 'all'
+  [genreFilter, artistFilter, yearFilter].forEach(sel => sel.querySelectorAll('option:not([value="all"])').forEach(o => o.remove()));
+
+  // sort genres alphabetically
+  const sortedGenres = Array.from(genreSet).sort();
+  sortedGenres.forEach(g => {
+    const option = document.createElement('option');
+    option.value = g;
+    option.textContent = g;
+    genreFilter.appendChild(option);
+  });
+
+  // sort artists alphabetically
+  const sortedArtists = Array.from(artistSet).sort();
+  sortedArtists.forEach(a => {
+    const option = document.createElement('option');
+    option.value = a;
+    option.textContent = a;
+    artistFilter.appendChild(option);
+  });
+
+  // sort years ascending (smallest to largest)
+  // convert years to numbers for proper sorting
+  const sortedYears = Array.from(yearSet).map(year => parseInt(year)).filter(year => !isNaN(year)).sort((a, b) => a - b);
+  sortedYears.forEach(y => {
+    const option = document.createElement('option');
+    option.value = y;
+    option.textContent = y;
+    yearFilter.appendChild(option);
+  });
+}
+
 function displayResults(results) {
   const resultsDiv = document.getElementById('results');
-
-  if (results.length === 0) {
-    resultsDiv.innerHTML = '<div class="no-results">Inga resultat hittades</div>';
-    return;
-  }
+  if (!results.length) { resultsDiv.innerHTML = '<div class="no-results">Inga resultat hittades</div>'; return; }
 
   resultsDiv.innerHTML = results.map(file => {
     const metadata = file.metadata_json || {};
-
     function renderMetadata(obj, prefix = "") {
       if (!obj || typeof obj !== "object") return `<span>${obj}</span>`;
       return Object.keys(obj).map(key => {
@@ -102,31 +137,71 @@ function displayResults(results) {
         }
       }).join('');
     }
-
     const details = renderMetadata(metadata);
 
     let preview = "";
     if (file.file_type === "image") {
       preview = `<img src="/files/image/${file.filename}" alt="${file.filename}" class="file-preview" onerror="this.style.display='none'">`;
     } else if (file.file_type === "audio") {
-      preview = `<audio controls class="file-preview">
-                  <source src="/files/audio/${file.filename}" type="audio/mpeg">
-                  Din webbläsare stödjer inte ljuduppspelning.
-                </audio>`;
+      preview = `<audio controls class="file-preview"><source src="/files/audio/${file.filename}" type="audio/mpeg">Din webbläsare stödjer inte ljuduppspelning.</audio>`;
     }
 
-    return `
-      <div class="result-card">
-        <h3>${file.filename}</h3>
-        <p><b>Typ:</b> ${file.file_type}</p>
-        ${preview}
-        ${details}
-      </div>
-    `;
+    // Dropdown only for images
+    let dropdown = "";
+    if (file.file_type === "image") {
+      dropdown = `<div class="dropdown"><button class="dropbtn">⋮</button>
+        <div class="dropdown-content">
+          <a href="/files/image/${file.filename}" download>Download</a>
+          <a href="#" onclick="shareImage('${file.filename}')">Share</a>
+        </div></div>`;
+    }
+
+    return `<div class="result-card">
+      <h3>${file.filename}</h3>
+      <p><b>Typ:</b> ${file.file_type}</p>
+      ${preview}
+      ${details}
+      ${dropdown}
+    </div>`;
   }).join('');
+
+  // Dropdown click handling
+  document.querySelectorAll('.dropbtn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const content = btn.nextElementSibling;
+      content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    });
+  });
+
+  document.addEventListener('click', e => {
+    document.querySelectorAll('.dropdown-content').forEach(dd => {
+      if (!dd.parentElement.contains(e.target)) dd.style.display = 'none';
+    });
+  });
+}
+
+function shareImage(filename) {
+  const url = `${window.location.origin}/files/image/${filename}`;
+  navigator.clipboard.writeText(url).then(() => {
+    showNotification('Länk kopierad till urklipp', false);
+  }).catch(() => showNotification('Kunde inte kopiera länken', true));
 }
 
 function toggleMapButton(results) {
+  const fileType = document.getElementById('fileType').value;
+  const mapControls = document.getElementById('mapControls');
+  const mapButton = document.getElementById('mapButton');
+  const hasGPS = results.some(f => f.file_type === 'image' && f.metadata_json?.gps?.lat && f.metadata_json?.gps?.lng);
+  mapControls.style.display = fileType === 'image' ? 'flex' : 'none';
+  mapButton.style.display = hasGPS ? 'block' : 'none';
+}
+
+// showMap, hideMap
+
+
+function toggleMapButton(results) {
+  const fileType = document.getElementById('fileType').value;
   const mapControls = document.getElementById('mapControls');
   const mapButton = document.getElementById('mapButton');
   const hasGPS = results.some(file => {
@@ -134,17 +209,11 @@ function toggleMapButton(results) {
     return file.file_type === 'image' && metadata.gps && metadata.gps.lat && metadata.gps.lng;
   });
 
-  mapControls.style.display = 'flex';
+  mapControls.style.display = fileType === 'image' ? 'flex' : 'none';
   mapButton.style.display = hasGPS ? 'block' : 'none';
-
-  if (!hasGPS && results.length > 0) {
-    showNotification('Inga bilder med platsinformation hittades', false);
-  }
 }
 
 function showMap() {
-  console.log("showMap function called");
-
   if (typeof L === 'undefined') {
     showNotification('Kartbiblioteket laddades inte korrekt. Ladda om sidan.');
     return;
@@ -169,7 +238,6 @@ function showMap() {
     map.invalidateSize();
   }
 
-  // clear old markers
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
@@ -181,8 +249,6 @@ function showMap() {
     const lng = parseFloat(metadata.gps.lng);
     return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
   });
-
-  console.log("Number of files with valid GPS:", gpsFiles.length);
 
   if (gpsFiles.length === 0) {
     showNotification('Inga bilder med platsinformation att visa');
@@ -211,10 +277,7 @@ function showMap() {
     markerGroup.addLayer(marker);
   });
 
-  // fit all markers in view
-  if (markers.length > 0) {
-    map.fitBounds(markerGroup.getBounds().pad(0.1));
-  }
+  map.fitBounds(markerGroup.getBounds().pad(0.1));
 }
 
 function hideMap() {

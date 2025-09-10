@@ -28,52 +28,76 @@
 
   <!-- Filters -->
   <div id="filtersContainer" class="filters-container" style="display: none;">
-    <label for="isoRange">Filtrera ISO:
-      <select id="isoRange">
-        <option value="all">Alla ISO</option>
-        <option value="0-50">0-50</option>
-        <option value="51-100">51-100</option>
-        <option value="101-150">101-150</option>
-        <option value="151-200">151-200</option>
-        <option value="201-250">201-250</option>
-        <option value="251-300">251-300</option>
-      </select>
-    </label>
+    <!-- Image filters -->
+    <div id="imageFilters">
+      <label for="isoRange">Filtrera ISO:
+        <select id="isoRange">
+          <option value="all">Alla ISO</option>
+          <option value="0-50">0-50</option>
+          <option value="51-100">51-100</option>
+          <option value="101-150">101-150</option>
+          <option value="151-200">151-200</option>
+          <option value="201-250">201-250</option>
+          <option value="251-300">251-300</option>
+        </select>
+      </label>
 
-    <label for="fNumber">Filtrera Bländare (f):
-      <select id="fNumber">
-        <option value="all">Alla f</option>
-        <option value="<3">Mindre än 3</option>
-        <option value="3">3</option>
-        <option value="3.5">3.5</option>
-        <option value="4">4</option>
-        <option value="4.5">4.5</option>
-        <option value="5">5</option>
-        <option value="5.5">5.5</option>
-        <option value="6">6</option>
-        <option value="6.5">6.5</option>
-        <option value="7">7</option>
-        <option value="7.5">7.5</option>
-        <option value="8">8</option>
-        <option value="8.5">8.5</option>
-        <option value="9">9</option>
-        <option value="9.5">9.5</option>
-        <option value="10">10</option>
-        <option value=">10">Större än 10</option>
-      </select>
-    </label>
+      <label for="fNumber">Filtrera Bländare (f):
+        <select id="fNumber">
+          <option value="all">Alla f</option>
+          <option value="<3">Mindre än 3</option>
+          <option value="3">3</option>
+          <option value="3.5">3.5</option>
+          <option value="4">4</option>
+          <option value="4.5">4.5</option>
+          <option value="5">5</option>
+          <option value="5.5">5.5</option>
+          <option value="6">6</option>
+          <option value="6.5">6.5</option>
+          <option value="7">7</option>
+          <option value="7.5">7.5</option>
+          <option value="8">8</option>
+          <option value="8.5">8.5</option>
+          <option value="9">9</option>
+          <option value="9.5">9.5</option>
+          <option value="10">10</option>
+          <option value=">10">Större än 10</option>
+        </select>
+      </label>
 
-    <label for="dateTaken">Filtrera År:
-      <select id="dateTaken">
-        <option value="all">Alla år</option>
-        <option value="2007">2007</option>
-        <option value="2008">2008</option>
-        <option value="2009">2009</option>
-        <option value="2010">2010</option>
-        <option value="2011">2011</option>
-        <option value="2012">2012</option>
-      </select>
-    </label>
+      <label for="dateTaken">Filtrera År:
+        <select id="dateTaken">
+          <option value="all">Alla år</option>
+          <option value="2007">2007</option>
+          <option value="2008">2008</option>
+          <option value="2009">2009</option>
+          <option value="2010">2010</option>
+          <option value="2011">2011</option>
+          <option value="2012">2012</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Audio filters -->
+    <div id="audioFilters" style="display: none;">
+      <label for="genreFilter">Genre:
+        <select id="genreFilter">
+          <option value="all">Alla genre</option>
+        </select>
+      </label>
+
+      <label for="artistFilter">Artist:
+        <select id="artistFilter">
+          <option value="all">Alla artister</option>
+        </select>
+      </label>
+
+      <label for="yearFilter">År:
+        <select id="yearFilter">
+          <option value="all">Alla år</option>
+        </select>
+      </label>
+    </div>
   </div>
 
   <!-- Map controls -->

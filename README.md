@@ -388,3 +388,13 @@ Detta minskar risken för konflikter, gör koden mer underhållbar och tydligare
 * Testloggning i konsolen visar antal filer med GPS-data för felsökning.
 * Enstaka filer med felaktiga koordinater identifierades och hanterades.
 
+---
+
+##  Förbättrad filtrering för ljudfiler
+
+- Lagt till nya filter för **Genre**, **Artist** och **Year** för ljudfiler.  
+- **Genre** och **Artist** visas nu i **alfabetisk ordning** för enklare navigering.  
+- **Year** är sorterade i **stigande ordning** (från äldsta till nyaste).  
+- Filtreringen fungerar dynamiskt baserat på tillgänglig metadata i databasen.  
+
+
