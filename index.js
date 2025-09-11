@@ -15,6 +15,8 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 // Serve media files
 app.use('/files/audio', express.static(path.join(__dirname, 'files', 'audio')));
 app.use('/files/image', express.static(path.join(__dirname, 'files', 'image')));
+app.use('/files/pdf', express.static(path.join(__dirname, 'files', 'pdf')));
+app.use('/files/ppt', express.static(path.join(__dirname, 'files', 'ppt')));
 
 // Homepage route
 app.get('/', (req, res) => {

@@ -1,3 +1,5 @@
+// frontend/script.js
+
 let latestResults = [];
 let map;
 let markers = [];
@@ -92,31 +94,20 @@ function populateAudioFilters(results) {
   // clear previous options except 'all'
   [genreFilter, artistFilter, yearFilter].forEach(sel => sel.querySelectorAll('option:not([value="all"])').forEach(o => o.remove()));
 
-  // sort genres alphabetically
-  const sortedGenres = Array.from(genreSet).sort();
-  sortedGenres.forEach(g => {
-    const option = document.createElement('option');
-    option.value = g;
-    option.textContent = g;
+  // Sort and add options alphabetically
+  [...genreSet].sort().forEach(g => {
+    const option = document.createElement('option'); option.value = g; option.textContent = g;
     genreFilter.appendChild(option);
   });
 
-  // sort artists alphabetically
-  const sortedArtists = Array.from(artistSet).sort();
-  sortedArtists.forEach(a => {
-    const option = document.createElement('option');
-    option.value = a;
-    option.textContent = a;
+  [...artistSet].sort().forEach(a => {
+    const option = document.createElement('option'); option.value = a; option.textContent = a;
     artistFilter.appendChild(option);
   });
 
-  // sort years ascending (smallest to largest)
-  // convert years to numbers for proper sorting
-  const sortedYears = Array.from(yearSet).map(year => parseInt(year)).filter(year => !isNaN(year)).sort((a, b) => a - b);
-  sortedYears.forEach(y => {
-    const option = document.createElement('option');
-    option.value = y;
-    option.textContent = y;
+  // Sort years in descending order
+  [...yearSet].sort((a, b) => b - a).forEach(y => {
+    const option = document.createElement('option'); option.value = y; option.textContent = y;
     yearFilter.appendChild(option);
   });
 }
@@ -146,13 +137,13 @@ function displayResults(results) {
       preview = `<audio controls class="file-preview"><source src="/files/audio/${file.filename}" type="audio/mpeg">Din webbläsare stödjer inte ljuduppspelning.</audio>`;
     }
 
-    // Dropdown only for images
+    // Dropdown for images, PDF, and PPT files
     let dropdown = "";
-    if (file.file_type === "image") {
+    if (["image", "pdf", "ppt"].includes(file.file_type)) {
       dropdown = `<div class="dropdown"><button class="dropbtn">⋮</button>
         <div class="dropdown-content">
-          <a href="/files/image/${file.filename}" download>Download</a>
-          <a href="#" onclick="shareImage('${file.filename}')">Share</a>
+          <a href="/files/${file.file_type}/${file.filename}" download>Ladda ner</a>
+          <a href="#" onclick="shareFile('${file.filename}', '${file.file_type}')">Dela</a>
         </div></div>`;
     }
 
@@ -181,8 +172,8 @@ function displayResults(results) {
   });
 }
 
-function shareImage(filename) {
-  const url = `${window.location.origin}/files/image/${filename}`;
+function shareFile(filename, fileType) {
+  const url = `${window.location.origin}/files/${fileType}/${filename}`;
   navigator.clipboard.writeText(url).then(() => {
     showNotification('Länk kopierad till urklipp', false);
   }).catch(() => showNotification('Kunde inte kopiera länken', true));
@@ -193,22 +184,6 @@ function toggleMapButton(results) {
   const mapControls = document.getElementById('mapControls');
   const mapButton = document.getElementById('mapButton');
   const hasGPS = results.some(f => f.file_type === 'image' && f.metadata_json?.gps?.lat && f.metadata_json?.gps?.lng);
-  mapControls.style.display = fileType === 'image' ? 'flex' : 'none';
-  mapButton.style.display = hasGPS ? 'block' : 'none';
-}
-
-// showMap, hideMap
-
-
-function toggleMapButton(results) {
-  const fileType = document.getElementById('fileType').value;
-  const mapControls = document.getElementById('mapControls');
-  const mapButton = document.getElementById('mapButton');
-  const hasGPS = results.some(file => {
-    const metadata = file.metadata_json || {};
-    return file.file_type === 'image' && metadata.gps && metadata.gps.lat && metadata.gps.lng;
-  });
-
   mapControls.style.display = fileType === 'image' ? 'flex' : 'none';
   mapButton.style.display = hasGPS ? 'block' : 'none';
 }

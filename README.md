@@ -422,3 +422,13 @@ Genomfört förbättringar i `frontend/style.css` för att lösa problem med hor
 - Förbättrad flexibilitet i sökfältet och filtercontainrar
 - La till `box-sizing: border-box` för bättre dimensionberäkning
 
+---
+
+# Utökad filhantering och förbättringar för pdf/ppt filar
+
+### Nya Funktionaliteter:
+- Utökad nedladdnings- och delningsfunktion  
+- Dropdown-menyn finns nu för alla filtyper: **bilder, PDF och PPT**  
+- Möjlighet att ladda ner och dela länkar för alla filtyper  
+  - _(Ljudfiler kan inte delas för närvarande)_
+
