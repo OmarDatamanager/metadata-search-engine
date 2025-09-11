@@ -424,7 +424,7 @@ Genomfört förbättringar i `frontend/style.css` för att lösa problem med hor
 
 ---
 
-# Utökad filhantering och förbättringar för pdf/ppt filar
+## Utökad filhantering och förbättringar för pdf/ppt filar
 
 ### Nya Funktionaliteter:
 - Utökad nedladdnings- och delningsfunktion  
