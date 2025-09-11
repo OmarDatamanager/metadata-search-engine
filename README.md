@@ -397,4 +397,28 @@ Detta minskar risken för konflikter, gör koden mer underhållbar och tydligare
 - **Year** är sorterade i **stigande ordning** (från äldsta till nyaste).  
 - Filtreringen fungerar dynamiskt baserat på tillgänglig metadata i databasen.  
 
+---
+
+# Uppdateringar för CSS-lösningar och förbättringar
+
+Genomfört förbättringar i `frontend/style.css` för att lösa problem med horisontell overflow för pdf och ppt filer och förbättra den övergripande användarupplevelsen. Här är de viktigaste ändringarna:
+
+### 1. Lösning av Horisontell Overflow
+- La till `overflow: hidden` på resultatkort för att förhindra innehåll från att flyta utanför gränserna
+- Implementerad `word-wrap: break-word` och `word-break: break-word` för att hantera långa ord och text
+
+### 2. Förbättrad Hantering av Långa Filnamn
+- La till `text-overflow: ellipsis` för att visa "..." när texten är för lång
+- Använde `white-space: nowrap` för att hålla filnamn på en rad
+- Satte `max-width: 100%` för att garantera att titlar passar inom kortet
+
+### 3. Optimering av Metadata-visning
+- Förbättrade visningen av metadatafält med bättre ordbrytning
+- Optimera etikettvisning med `text-overflow: ellipsis`
+
+### 4. Responsiv Design Förbättringar
+- La till media queries för mindre skärmar
+- Optimera layouten för mobila enheter
+- Förbättrad flexibilitet i sökfältet och filtercontainrar
+- La till `box-sizing: border-box` för bättre dimensionberäkning
 

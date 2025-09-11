@@ -32,6 +32,8 @@ h1 {
   border-radius: 4px;
   font-size: 16px;
   min-width: 150px;
+  box-sizing: border-box;
+  /* adding to improve layout */
 }
 
 /* Search button */
@@ -75,6 +77,8 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 0.95em;
+  box-sizing: border-box;
+  /* adding to improve layout */
 }
 
 /* Map controls */
@@ -102,24 +106,43 @@ h1 {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
   position: relative;
-  /* مهم للـ dropdown */
+  overflow: hidden;
+  /* prevent overflow */
+  word-wrap: break-word;
+  /* break long words */
 }
 
 .result-card:hover {
   transform: translateY(-3px);
 }
 
-/* Filename */
+/* Filename - Fix long text issue */
 .result-card h3 {
   margin: 0 0 8px 0;
   font-size: 1.1em;
   color: #2c3e50;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
-/* Metadata fields */
+/* Metadata fields - Fix long text issue */
 .meta-field {
   margin: 3px 0;
   font-size: 0.95em;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.meta-field b {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
 }
 
 /* Image preview */
@@ -206,4 +229,27 @@ audio.file-preview {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   grid-column: 1 / -1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-bar input[type="text"],
+  .search-bar select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  #results {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
