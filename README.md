@@ -432,3 +432,35 @@ Genomfört förbättringar i `frontend/style.css` för att lösa problem med hor
 - Möjlighet att ladda ner och dela länkar för alla filtyper  
   - _(Ljudfiler kan inte delas för närvarande)_
 
+  ---
+
+  # Uppdateringar för Metadata-sökmotorn
+
+###  Designförbättringar
+- **Moderniserad användargränssnitt**: Heltt nytt responsivt design med enhetlig färgpalett
+- **Hero-sektion**: Infördes en attraktiv ingress med projektbeskrivning och call-to-action-knappar
+- **Förbättrad navigering**: Läggt till meny för enkel navigering mellan olika sektioner
+- **Om Oss-sektion**: Ny informativ sektion som beskriver projektet och dess funktioner
+- **Kontaktsektion**: Tillagt kontaktinformation och sociala medier-länkar
+- **Professionell footer**: Uppdaterad footer med copyright-information och snabblänkar
+
+###  Funktionsförbättringar
+- **Interaktiv navigering**: Möjlighet att växla mellan sök, om oss och kontakt-sektioner
+- **Förbättrade notifikationer**: Mer tydliga och visuellt tilltalande meddelanden
+- **Icon-tillägg**: Använder Font Awesome-ikoner för bättre visuell kommunikation
+- **Responsiv design**: Optimerad för alla skärmstorlekar från mobil till desktop
+
+###  Tekniska Förbättringar
+- **CSS-variabler**: Infört CSS custom properties för enklare färghantering
+- **Strukturerad kod**: Bättre organiserad HTML och CSS för underhållbarhet
+- **Animationer**: Lätta övergångseffekter och hover-effekter för bättre användarupplevelse
+
+## Användning
+Alla funktioner behåller sin ursprungliga funktionalitet - dessa uppdateringar fokuserar enbart på förbättrad användarupplevelse och visuellt utseende.
+
+## Tekniker
+- HTML5, CSS3 med Flexbox/Grid
+- Vanilla JavaScript
+- Font Awesome ikoner
+- Leaflet för kartfunktionalitet
+- Responsiv design

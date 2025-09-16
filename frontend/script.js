@@ -1,5 +1,85 @@
-// frontend/script.js
+// Navigation functionality
+document.addEventListener('DOMContentLoaded', function () {
+  // Navigation links
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = {
+    search: document.getElementById('searchSection'),
+    about: document.getElementById('aboutSection'),
+    contact: document.getElementById('contactSection')
+  };
 
+  // Handle navigation clicks
+  navLinks.forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // Remove active class from all links
+      navLinks.forEach(l => l.classList.remove('active'));
+
+      // Add active class to clicked link
+      this.classList.add('active');
+
+      // Hide all sections
+      Object.values(sections).forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Show the selected section
+      const sectionName = this.getAttribute('data-section');
+      if (sections[sectionName]) {
+        sections[sectionName].style.display = 'block';
+      }
+
+      // Special case for search section
+      if (sectionName === 'search') {
+        document.querySelector('.hero').style.display = 'block';
+      } else {
+        document.querySelector('.hero').style.display = 'none';
+      }
+    });
+  });
+
+  // Hero section buttons
+  const startSearchBtn = document.getElementById('startSearchBtn');
+  const learnMoreBtn = document.getElementById('learnMoreBtn');
+
+  if (startSearchBtn) {
+    startSearchBtn.addEventListener('click', function () {
+      // Show search section and hide hero
+      document.querySelector('.hero').style.display = 'none';
+      sections.search.style.display = 'block';
+
+      // Update navigation
+      navLinks.forEach(l => l.classList.remove('active'));
+      document.querySelector('[data-section="search"]').classList.add('active');
+
+      // Scroll to search
+      document.querySelector('.search-bar').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  if (learnMoreBtn) {
+    learnMoreBtn.addEventListener('click', function () {
+      // Show about section and hide hero
+      document.querySelector('.hero').style.display = 'none';
+      sections.about.style.display = 'block';
+
+      // Update navigation
+      navLinks.forEach(l => l.classList.remove('active'));
+      document.querySelector('[data-section="about"]').classList.add('active');
+
+      // Scroll to top of about section
+      sections.about.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // Existing functionality
+  document.getElementById('searchButton').addEventListener('click', searchFiles);
+  document.getElementById('mapButton').addEventListener('click', showMap);
+  document.getElementById('backButton').addEventListener('click', hideMap);
+});
+
+// Rest of the existing functions remain unchanged
 let latestResults = [];
 let map;
 let markers = [];
@@ -114,7 +194,15 @@ function populateAudioFilters(results) {
 
 function displayResults(results) {
   const resultsDiv = document.getElementById('results');
-  if (!results.length) { resultsDiv.innerHTML = '<div class="no-results">Inga resultat hittades</div>'; return; }
+  if (!results.length) {
+    resultsDiv.innerHTML = `
+      <div class="no-results">
+        <i class="fas fa-search"></i>
+        <p>Inga resultat hittades</p>
+      </div>
+    `;
+    return;
+  }
 
   resultsDiv.innerHTML = results.map(file => {
     const metadata = file.metadata_json || {};
@@ -261,9 +349,3 @@ function hideMap() {
   document.getElementById('backButton').style.display = 'none';
   document.getElementById('mapButton').style.display = 'block';
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('searchButton').addEventListener('click', searchFiles);
-  document.getElementById('mapButton').addEventListener('click', showMap);
-  document.getElementById('backButton').addEventListener('click', hideMap);
-});
