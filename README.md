@@ -36,3 +36,15 @@ Det här är en sökmotor för metadata som extraherar och söker i metadata fr�
 - **Databas**: MySQL
 - **Filbehandling**: pdf-parse-fork, exifr
 - **Versionshantering**: Git, GitHub
+
+---
+
+## Om Git-strukturen i detta projekt
+
+För att visa den iterativa utvecklingsprocessen och hur projektet växte steg för steg har jag behållit alla feature-branches i Git-repot. Varje branch representerar ett specifikt utvecklingsskede eller en ny funktion.
+
+**Viktigt att notera:**  
+Den slutgiltiga och fullständiga versionen av projektet (inklusive den slutliga README-filen) finns i branchen **`frontend-redesign`**. Denna branch innehåller alla senaste uppdateringar, förbättringar och den mest kompletta versionen av sökmotorn.
+
+
+Tidigare branches behålls endast för att visa utvecklingshistoriken och den arbetsmetodik som användes.
